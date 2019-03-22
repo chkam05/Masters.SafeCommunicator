@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safe Communicator", "Safe Communicator\Safe Communicator.csproj", "{9B26F914-1E09-4F62-861A-9D1028447726}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B26F914-1E09-4F62-861A-9D1028447726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B26F914-1E09-4F62-861A-9D1028447726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B26F914-1E09-4F62-861A-9D1028447726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B26F914-1E09-4F62-861A-9D1028447726}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3D94CC10-D603-476F-9B3C-3F57AD083651}
+	EndGlobalSection
+EndGlobal
