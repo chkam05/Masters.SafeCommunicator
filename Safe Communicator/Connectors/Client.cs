@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,10 @@ namespace Safe_Communicator.Connectors {
         public  int             Port                { get; }        =   65534;
         public  int             BufferSize          { get; }        =   2048;
 
+        private bool            encryption                          =   false;
+        private ERSA            encryptionServices;
+        private string          serverPublicKey;
+
         private string          srvName                             =   "Server";
         private Socket          cliSocket;
         public  int             Sender              { get; set; }   =   0;
@@ -75,6 +80,8 @@ namespace Safe_Communicator.Connectors {
             this.Username   =   username;
             this.ServerIP   =   ip;
             this.Port       =   port;
+
+            this.encryptionServices = new ERSA();
         }
 
         // ##########################################################################################
@@ -149,6 +156,10 @@ namespace Safe_Communicator.Connectors {
 
                     Array.Copy( buffer, message, bufferSize );
                     Message newMessage      =   Message.ReadMessage( Encoding.ASCII.GetString( message ) );
+                    
+                    // DECRYPTION
+                    newMessage.Decrypt( encryptionServices, encryption );
+                    
                     bool    executed        =   ExecutServerCommand( newMessage );
 
                     if ( !executed ) {
@@ -156,9 +167,9 @@ namespace Safe_Communicator.Connectors {
                         int         reciverId       =   newMessage.reciverId;
                         string[]    senders         =   (from c in Clients where c[0] == senderId.ToString() select c[1]).ToArray();
                         string      sendDate        =   newMessage.sendDate.ToString();
-                        string      content         =   newMessage.message;
+                        
                         UpdateUI(
-                            sendDate + " " + (senders.Length > 0 ? senders[0] : senderId.ToString()) + Environment.NewLine + content,
+                            sendDate + " " + (senders.Length > 0 ? senders[0] : senderId.ToString()) + Environment.NewLine + newMessage.message,
                             MessageModifier.INCOMING
                         );
                     }
@@ -200,24 +211,11 @@ namespace Safe_Communicator.Connectors {
             if ( cliSocket == null ) { return; }
             if ( !cliSocket.Connected ) { return; }
 
+            // ENCRYPTION
+            if ( encryption ) { message.Encrypt( encryptionServices, serverPublicKey ); }
+
             byte[]  buffer      =   Encoding.ASCII.GetBytes( message.ToString() );
             cliSocket.Send( buffer );
-        }
-
-        // ##########################################################################################
-        //   xxx     xxx    x   x   x   x    xxx    x   x   xxxx     xxxx
-        //  x   x   x   x   xx xx   xx xx   x   x   xx  x    x  x   x    
-        //  x       x   x   x x x   x x x   xxxxx   x x x    x  x    xxx 
-        //  x   x   x   x   x   x   x   x   x   x   x  xx    x  x       x
-        //   xxx     xxx    x   x   x   x   x   x   x   x   xxxx    xxxx 
-        // ##########################################################################################
-        private bool ExecuteServerCommand() {
-            return false;
-        }
-
-        // ------------------------------------------------------------------------------------------
-        private bool ExecuteClientCommand() {
-            return false;
         }
 
         // ##########################################################################################
@@ -260,7 +258,9 @@ namespace Safe_Communicator.Connectors {
 
         // ------------------------------------------------------------------------------------------
         private void ConfigureServerCommand() {
-            string  content     =   Tools.ConcatLines( new string[] { Username, "", "<end>" }, 0, 3, Environment.NewLine );
+            // SEND KEY
+            string  publicKey   =   encryptionServices.PublicStringKey;
+            string  content     =   Tools.ConcatLines( new string[] { Username, publicKey, "<end>" }, 0, 3, Environment.NewLine );
             Message newMessage  =   new Message( identifier, 0, DateTime.Now, "/config", content );
             SendMessage( newMessage );
         }
@@ -304,11 +304,15 @@ namespace Safe_Communicator.Connectors {
             string[]    arguments   =   Tools.ReadLines( message );
 
             try {
-                srvName     =   arguments[0];
-                identifier  =   int.Parse( arguments[1] );
+                srvName             =   arguments[0];
+                identifier          =   int.Parse( arguments[1] );
+                // RECIVE KEY
+                serverPublicKey     =   arguments[2];
             }
             catch ( IndexOutOfRangeException ) { /* Not transferred all required data */ }
             catch ( Exception ) { /* Unknown Data Error Exception */ }
+
+            try { if ( arguments[1] != "" ) { encryption = true; } } catch { /* NOT CRYPTED */ }
             UpdateList();
         }
 

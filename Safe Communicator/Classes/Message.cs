@@ -37,6 +37,16 @@ namespace Safe_Communicator.Classes {
             this.message    =   message;
         }
 
+        // ------------------------------------------------------------------------------------------
+        public void Encrypt( ERSA ersa, string publicKey ) {
+            this.message    =   ersa.Encrypt( this.message, publicKey );
+        }
+
+        // ------------------------------------------------------------------------------------------
+        public void Decrypt( ERSA ersa, bool decrypt ) {
+            if ( decrypt ) { this.message = ersa.Decrypt( this.message ); }
+        }
+
         // ##########################################################################################
         //  xxxx    xxxxx    xxx    xxxx    xxxxx   xxxx 
         //  x   x   x       x   x    x  x   x       x   x

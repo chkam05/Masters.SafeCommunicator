@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,8 +20,9 @@ namespace Safe_Communicator.Classes {
         
         public  int             Identifier          { get; set; }   =   0;
         public  string          Name                { get; set; }   =   "Client";
-        private string          key                                 =   "";
-        private bool            encrypted                           =   false;
+
+        private bool            encryption                          =   false;
+        private string          clientPublicKey;
 
         public  int             ReconnectAttempt    { get; set; }   =   0;
 
@@ -112,15 +114,14 @@ namespace Safe_Communicator.Classes {
 
         // ------------------------------------------------------------------------------------------
         public string Key {
-            get { return this.key; }
-            set {
-                this.encrypted  =   (value != "") ? true : false;
-                this.key        =   (value != "") ? value : "";
-            }
+            get { return this.clientPublicKey; }
+            set { this.clientPublicKey = value; }
         }
 
-        public bool isEncrypted {
-            get { return this.encrypted; }
+        // ------------------------------------------------------------------------------------------
+        public bool Encrypted {
+            get { return this.encryption; }
+            set { this.encryption = value; }
         }
 
         // ------------------------------------------------------------------------------------------

@@ -30,7 +30,7 @@ namespace Safe_Communicator.Forms {
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "0",
             "Server",
             "127.0.0.1"}, -1);
@@ -360,7 +360,7 @@ namespace Safe_Communicator.Forms {
             this.listViewClientUsers.GridLines = true;
             this.listViewClientUsers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewClientUsers.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem5});
+            listViewItem1});
             this.listViewClientUsers.Location = new System.Drawing.Point(0, 32);
             this.listViewClientUsers.Margin = new System.Windows.Forms.Padding(0);
             this.listViewClientUsers.MultiSelect = false;
@@ -455,7 +455,8 @@ namespace Safe_Communicator.Forms {
             this.textBoxMenuInfo.ReadOnly = true;
             this.textBoxMenuInfo.Size = new System.Drawing.Size(367, 337);
             this.textBoxMenuInfo.TabIndex = 0;
-            this.textBoxMenuInfo.Text = "Tutaj będzie widniał w przyszłości opis programu.\r\n\r\nTwórcy:\r\nKamil Karpiński";
+            this.textBoxMenuInfo.Text = "Tutaj będzie widniał w przyszłości opis programu.\r\n\r\nTwórcy:\r\nAgata Dziurka\r\nKami" +
+    "l Karpiński";
             // 
             // fLPanelMenuData
             // 

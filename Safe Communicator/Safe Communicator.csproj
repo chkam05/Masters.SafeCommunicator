@@ -53,6 +53,7 @@
     <Compile Include="Enumerators\MessageModifier.cs" />
     <Compile Include="Enumerators\MessageType.cs" />
     <Compile Include="Tool\DataStatic.cs" />
+    <Compile Include="Tool\ERSA.cs" />
     <Compile Include="Tool\Tools.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>

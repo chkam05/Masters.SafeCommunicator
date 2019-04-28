@@ -43,6 +43,8 @@ namespace Safe_Communicator.Connectors {
         public  int                 Port                { get; }        =   65534;
         public  int                 BufferSize          { get; }        =   2048;
 
+        private ERSA                encryptionServices;
+
         private byte[]              buffer;
         private Socket              srvSocket;
         private IPEndPoint          srvEndPoint;
@@ -70,6 +72,8 @@ namespace Safe_Communicator.Connectors {
             this.Username   =   username;
             this.ServerIP   =   ip;
             this.Port       =   port;
+
+            this.encryptionServices = new ERSA();
         }
 
         // ##########################################################################################
@@ -165,13 +169,16 @@ namespace Safe_Communicator.Connectors {
 
                 Array.Copy( client.Buffer, buffer, bufferSize );
                 Message newMessage      =   Message.ReadMessage( Encoding.ASCII.GetString( buffer ) );
+                
+                // DECRYPTION
+                newMessage.Decrypt( encryptionServices, client.Encrypted );
+                
                 bool    executed        =   ExecuteClientCommand( newMessage, client );
                 
                 if ( !executed ) {
                     int     senderId    =   newMessage.senderId;
                     int     reciverId   =   newMessage.reciverId;
                     string  sendDate    =   newMessage.sendDate.ToString();
-                    string  content     =   newMessage.message;
 
                     if ( reciverId == 0 ) {
                         UpdateUI( sendDate + " [ " + client.Name + " ] " + Environment.NewLine + newMessage.message );
@@ -226,6 +233,10 @@ namespace Safe_Communicator.Connectors {
         /// <param name="message"> Wiadomość wysyłana do klienta. </param>
         private void SendMessage( ClientData client, Message message ) {
             Socket          socket  =   client.Socket;
+
+            // ENCRYPTION
+            if ( client.Encrypted ) { message.Encrypt( encryptionServices, client.Key ); }
+
             byte[]          buffer  =   Encoding.ASCII.GetBytes( message.ToString() );
             Console.Write( message.ToString() );
             AsyncCallback   sender  =   new AsyncCallback( SendCallback );
@@ -354,15 +365,20 @@ namespace Safe_Communicator.Connectors {
 
             try {
                 sender.Name =   arguments[0];
+                // RECIVE KEY
                 sender.Key  =   arguments[1];
             }
             catch ( IndexOutOfRangeException ) { /* Not transferred all required data */ }
             catch ( Exception ) { /* Unknown Data Error Exception */ }
 
+            // SEND KEY
+            string  publicKey   =   encryptionServices.PublicStringKey;
             string  content     =   Tools.ConcatLines(
-                new string[] { Username, sender.Identifier.ToString(), "<end>" }, 0, 3, Environment.NewLine );
+                new string[] { Username, sender.Identifier.ToString(), publicKey, "<end>" }, 0, 3, Environment.NewLine );
             Message newMessage  =   new Message( 0, sender.Identifier, DateTime.Now, "/config", content );
             SendMessage( sender, newMessage );
+
+            try { if ( arguments[1] != "" ) { sender.Encrypted = true; } } catch { /* NOT CRYPTED */ }
             UpdateClientList();
         }
 
