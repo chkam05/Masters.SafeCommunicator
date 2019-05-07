@@ -30,10 +30,11 @@ namespace Safe_Communicator.Forms {
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "0",
             "Server",
             "127.0.0.1"}, -1);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuClient = new System.Windows.Forms.MenuStrip();
             this.menuItemClient = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemClientBack = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,7 +66,6 @@ namespace Safe_Communicator.Forms {
             this.fLPanelClientControl = new System.Windows.Forms.FlowLayoutPanel();
             this.buttonServer = new System.Windows.Forms.Button();
             this.panelMenu = new System.Windows.Forms.Panel();
-            this.panelMenuInfo = new System.Windows.Forms.Panel();
             this.textBoxMenuInfo = new System.Windows.Forms.TextBox();
             this.fLPanelMenuData = new System.Windows.Forms.FlowLayoutPanel();
             this.labelMenuTitle = new System.Windows.Forms.Label();
@@ -82,6 +82,7 @@ namespace Safe_Communicator.Forms {
             this.tLPanelMenuLaunch = new System.Windows.Forms.TableLayoutPanel();
             this.buttonClient = new System.Windows.Forms.Button();
             this.bgWorkerMenuTime = new System.ComponentModel.BackgroundWorker();
+            this.panelMenuInfo = new System.Windows.Forms.Panel();
             this.menuClient.SuspendLayout();
             this.menuServer.SuspendLayout();
             this.panelServer.SuspendLayout();
@@ -91,9 +92,9 @@ namespace Safe_Communicator.Forms {
             this.panelClientEdit.SuspendLayout();
             this.panelClientUsers.SuspendLayout();
             this.panelMenu.SuspendLayout();
-            this.panelMenuInfo.SuspendLayout();
             this.fLPanelMenuData.SuspendLayout();
             this.tLPanelMenuLaunch.SuspendLayout();
+            this.panelMenuInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuClient
@@ -360,7 +361,7 @@ namespace Safe_Communicator.Forms {
             this.listViewClientUsers.GridLines = true;
             this.listViewClientUsers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewClientUsers.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
+            listViewItem2});
             this.listViewClientUsers.Location = new System.Drawing.Point(0, 32);
             this.listViewClientUsers.Margin = new System.Windows.Forms.Padding(0);
             this.listViewClientUsers.MultiSelect = false;
@@ -432,18 +433,6 @@ namespace Safe_Communicator.Forms {
             this.panelMenu.Size = new System.Drawing.Size(784, 441);
             this.panelMenu.TabIndex = 2;
             // 
-            // panelMenuInfo
-            // 
-            this.panelMenuInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelMenuInfo.Controls.Add(this.textBoxMenuInfo);
-            this.panelMenuInfo.Location = new System.Drawing.Point(396, 20);
-            this.panelMenuInfo.Margin = new System.Windows.Forms.Padding(0);
-            this.panelMenuInfo.Name = "panelMenuInfo";
-            this.panelMenuInfo.Size = new System.Drawing.Size(367, 337);
-            this.panelMenuInfo.TabIndex = 1;
-            // 
             // textBoxMenuInfo
             // 
             this.textBoxMenuInfo.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -453,10 +442,10 @@ namespace Safe_Communicator.Forms {
             this.textBoxMenuInfo.Multiline = true;
             this.textBoxMenuInfo.Name = "textBoxMenuInfo";
             this.textBoxMenuInfo.ReadOnly = true;
+            this.textBoxMenuInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxMenuInfo.Size = new System.Drawing.Size(367, 337);
             this.textBoxMenuInfo.TabIndex = 0;
-            this.textBoxMenuInfo.Text = "Tutaj będzie widniał w przyszłości opis programu.\r\n\r\nTwórcy:\r\nAgata Dziurka\r\nKami" +
-    "l Karpiński";
+            this.textBoxMenuInfo.Text = resources.GetString("textBoxMenuInfo.Text");
             // 
             // fLPanelMenuData
             // 
@@ -647,6 +636,18 @@ namespace Safe_Communicator.Forms {
             // 
             this.bgWorkerMenuTime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorkerMenuTimeFunc);
             // 
+            // panelMenuInfo
+            // 
+            this.panelMenuInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelMenuInfo.Controls.Add(this.textBoxMenuInfo);
+            this.panelMenuInfo.Location = new System.Drawing.Point(396, 20);
+            this.panelMenuInfo.Margin = new System.Windows.Forms.Padding(0);
+            this.panelMenuInfo.Name = "panelMenuInfo";
+            this.panelMenuInfo.Size = new System.Drawing.Size(367, 337);
+            this.panelMenuInfo.TabIndex = 1;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -657,6 +658,7 @@ namespace Safe_Communicator.Forms {
             this.Controls.Add(this.panelClient);
             this.Controls.Add(this.menuClient);
             this.Controls.Add(this.menuServer);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuClient;
             this.MinimumSize = new System.Drawing.Size(399, 398);
             this.Name = "MainForm";
@@ -679,11 +681,11 @@ namespace Safe_Communicator.Forms {
             this.panelClientEdit.PerformLayout();
             this.panelClientUsers.ResumeLayout(false);
             this.panelMenu.ResumeLayout(false);
-            this.panelMenuInfo.ResumeLayout(false);
-            this.panelMenuInfo.PerformLayout();
             this.fLPanelMenuData.ResumeLayout(false);
             this.fLPanelMenuData.PerformLayout();
             this.tLPanelMenuLaunch.ResumeLayout(false);
+            this.panelMenuInfo.ResumeLayout(false);
+            this.panelMenuInfo.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -709,7 +711,6 @@ namespace Safe_Communicator.Forms {
         private System.Windows.Forms.Label labelMenuPort;
         private System.Windows.Forms.TextBox textBoxMenuPort;
         private System.Windows.Forms.Button buttonClient;
-        private System.Windows.Forms.Panel panelMenuInfo;
         private System.Windows.Forms.TextBox textBoxMenuInfo;
         private System.Windows.Forms.TextBox textBoxServerConsole;
         private System.Windows.Forms.Panel panelServerConsole;
@@ -739,6 +740,7 @@ namespace Safe_Communicator.Forms {
         private System.Windows.Forms.ColumnHeader colId;
         private System.Windows.Forms.ColumnHeader colName;
         private System.Windows.Forms.ColumnHeader colIP;
+        private System.Windows.Forms.Panel panelMenuInfo;
     }
 
 }
