@@ -21,6 +21,7 @@ namespace Safe_Communicator.Classes {
         public  int             Identifier          { get; set; }   =   0;
         public  string          Name                { get; set; }   =   "Client";
 
+        private CryptType       cryptType                           =   0;
         private bool            encryption                          =   false;
         private string          clientPublicKey;
 
@@ -110,6 +111,12 @@ namespace Safe_Communicator.Classes {
             IPEndPoint  remoteEndPoint  =   (IPEndPoint) socket.RemoteEndPoint;
             IPAddress   remoteIpAddress =   remoteEndPoint.Address;
             return remoteIpAddress.MapToIPv4();
+        }
+
+        // ------------------------------------------------------------------------------------------
+        public CryptType CryptType {
+            get { return this.cryptType; }
+            set { this.cryptType = value; }
         }
 
         // ------------------------------------------------------------------------------------------

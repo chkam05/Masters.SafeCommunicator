@@ -9,28 +9,48 @@ using System.Threading.Tasks;
 
 namespace Safe_Communicator.Tool {
 
-    public enum Errors {
-        NO_ERROR        =   0,
-        INVALID_FORMAT  =   1,
-        INVALID_RANGE   =   2,
-    }
-
-    // ####################################################################################################
-    //  xxxxx    xxx     xxx    x        xxxx
-    //    x     x   x   x   x   x       x    
-    //    x     x   x   x   x   x        xxx 
-    //    x     x   x   x   x   x           x
-    //    x      xxx     xxx    xxxxx   xxxx 
-    // ####################################################################################################
     public static class Tools {
-        
+
+        #region Cryptography Tools
         // ##########################################################################################
-        //  xxxxx   xxxx        xxx    xxxx    xxxx    xxxx    xxxxx    xxxx    xxxx   xxxxx    xxxx
-        //    x     x   x      x   x    x  x    x  x   x   x   x       x       x       x       x    
-        //    x     xxxx       xxxxx    x  x    x  x   xxxx    xxxx     xxx     xxx    xxxx     xxx 
-        //    x     x          x   x    x  x    x  x   x   x   x           x       x   x           x
-        //  xxxxx   x          x   x   xxxx    xxxx    x   x   xxxxx   xxxx    xxxx    xxxxx   xxxx 
+        /// <summary> Potęgowanie modułowe. </summary>
+        /// <param name="a">  </param>
+        /// <param name="b">  </param>
+        /// <param name="c">  </param>
+        /// <returns>  </returns>
+        public static long ExpMod( long a, long b, long c ) {
+            long    x   =   1;
+            long    y   =   a;
+            long    bt  =   b;
+
+            while ( bt > 0 ) {
+                if ( bt % 2  == 0 ) x = (x * y) % c;
+                y   =   (y * y) % c;
+                bt  =   (int) bt / 2;
+            }
+
+            return x % c;
+        }
+
+        // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja losująca wartości liczbowe long (64bit) z przedziału. </summary>
+        /// <param name="min"> Minimalna wartość przedziału. </param>
+        /// <param name="max"> Maksymalna wartość przedziału. </param>
+        /// <param name="random"> Losowa liczba. </param>
+        /// <returns></returns>
+        public static long LongRandom( long min, long max, Random random ) {
+            byte[]  buffer      =   new byte[8];
+            random.NextBytes( buffer );
+            long    longRandom  =   BitConverter.ToInt64( buffer, 0 );
+            long    result      =   Math.Abs( longRandom % (max - min) + min );
+            return  result;
+        }
+
+        #endregion Cryptography Tools
+        #region IP Tools
         // ##########################################################################################
+        /// <summary> Funkcja zwracający wewnętrzny adres IP. </summary>
+        /// <returns> Wewnętrzyny adres IP w postaci ciągu tekstowego. </returns>
         public static string GetInsideIP() {
             string      localIP     =   "127.0.0.1";
             Socket      socket      =   new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
@@ -49,6 +69,8 @@ namespace Safe_Communicator.Tool {
         }
         
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająza zewnętrzny adres IP. </summary>
+        /// <returns> Zewnętrzny adres IP w postaci ciągu tekstowego. </returns>
         public static string GetOutsideIP() {
             try {
                 // string  ext_ip  =   new WebClient().DownloadString("http://icanhazip.com");
@@ -73,19 +95,24 @@ namespace Safe_Communicator.Tool {
             }
         }
 
+        #endregion IP Tools
+        #region String Tools
         // ##########################################################################################
-        //   xxxx   xxxxx   xxxx    xxxxx   x   x    xxxx
-        //  x         x     x   x     x     xx  x   x    
-        //   xxx      x     xxxx      x     x x x   x  xx
-        //      x     x     x   x     x     x  xx   x   x
-        //  xxxx      x     x   x   xxxxx   x   x    xxxx
-        // ##########################################################################################
+        /// <summary> Funkcja rozdzielająca ciąg znaków na tablice podciągów dzielonych nową linią. </summary>
+        /// <param name="text"> Ciąg znaków (wiadomość). </param>
+        /// <returns> Tablica podciągów (Dane po dekapsulacji). </returns>
         public static string[] ReadLines( string text ) {
             return text.Split( new[] { Environment.NewLine }, StringSplitOptions.None );
         }
 
         // ------------------------------------------------------------------------------------------
-        public static string ConcatLines( string[] text_array, int start_index, int end_index, string connector ) {
+        /// <summary> Funkcja łącząca podciągi znaków na ciąg znaków połączonych ze sobą znakiem. </summary>
+        /// <param name="text_array"> Tablica podciągów (Danych do enkapsulacji). </param>
+        /// <param name="start_index"> Indeks podciągu początkowego. </param>
+        /// <param name="end_index"> Indeks podciągu końcowego. </param>
+        /// <param name="connector"> Znak łączący (domyślnie spacja) </param>
+        /// <returns> Ciąg znaków (Dane po enkapsulacji). </returns>
+        public static string ConcatLines( string[] text_array, int start_index, int end_index, string connector = "\r\n" ) {
             string  result  =   "";
             int     start   =   Math.Min( start_index, text_array.Length-1 );
             int     end     =   Math.Min( end_index, text_array.Length );
@@ -96,8 +123,9 @@ namespace Safe_Communicator.Tool {
             return  result;
         }
 
+        #endregion String Tools
         // ##########################################################################################
+
     }
 
-    // ####################################################################################################
 }

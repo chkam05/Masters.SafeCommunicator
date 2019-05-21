@@ -1,4 +1,6 @@
-﻿using Safe_Communicator.Connectors;
+﻿using Safe_Communicator.Classes;
+using Safe_Communicator.Crypt;
+using Safe_Communicator.Connectors;
 using Safe_Communicator.Enumerators;
 using Safe_Communicator.Tool;
 using System;
@@ -51,6 +53,7 @@ namespace Safe_Communicator.Forms {
         private void MainForm_Load(object sender, EventArgs e) {
             labelMenuInsideIP.Text      =   inside_IP;
             labelMenuOutsideIP.Text     =   outside_IP;
+            LoadData();
 
             panelMenu.Visible           =   true;
             panelClient.Visible         =   false;
@@ -74,6 +77,8 @@ namespace Safe_Communicator.Forms {
                 else { e.Cancel = true; }
                 server.ShutDown();
             }
+
+            SaveData();
         }
 
         // ------------------------------------------------------------------------------------------
@@ -89,13 +94,14 @@ namespace Safe_Communicator.Forms {
         //  xxxx     xxx      x       x      xxx    x   x   xxxx 
         // ##########################################################################################
         private void buttonClient_Click(object sender, EventArgs e) {
-            Errors  error_code  =   Errors.NO_ERROR;
+            Errors      error_code  =   Errors.NO_ERROR;
+            CryptType   ctype       =   (CryptType) comboBoxMenuCrypt.SelectedIndex;
             if ( !DataCheck.CheckLogin( textBoxMenuLogin.Text, out error_code ) ) { Messages.IncorrectLoginError( error_code ); }
             if ( !DataCheck.CheckIP( textBoxMenuIP.Text, out error_code ) ) { Messages.IncorrectIPError( error_code ); }
             if ( !DataCheck.CheckPort( textBoxMenuPort.Text, out error_code ) ) { Messages.IncorrectPortError( error_code ); }
             int.TryParse( textBoxMenuPort.Text, out int port );
 
-            client                      =   new Client( textBoxMenuLogin.Text, textBoxMenuIP.Text, port );
+            client                      =   new Client( textBoxMenuLogin.Text, textBoxMenuIP.Text, port, ctype );
             client.CliOutput            =   rTextBoxClientMessage;
             client.CliList              =   listViewClientUsers;
             client.FuncShowMessage      =   ClientShowMessage;
@@ -304,6 +310,37 @@ namespace Safe_Communicator.Forms {
             listViewClientUsers.Items.Clear();
             textBoxClient.Enabled       =   false;
             buttonClientSend.Enabled    =   false;
+        }
+
+        // ##########################################################################################
+        //   xxxx    xxx    x   x   xxxxx      xxxx     xxx    xxxxx    xxx 
+        //  x       x   x   x   x   x           x  x   x   x     x     x   x
+        //   xxx    xxxxx   x   x   xxxx        x  x   xxxxx     x     xxxxx
+        //      x   x   x    x x    x           x  x   x   x     x     x   x
+        //  xxxx    x   x     x     xxxxx      xxxx    x   x     x     x   x
+        // ##########################################################################################
+        private void SaveData() {
+            var data = Properties.Settings.Default;
+            data.NickName   =   textBoxMenuLogin.Text;
+            data.IPAddress  =   textBoxMenuIP.Text;
+            data.Port       =   textBoxMenuPort.Text;
+            data.Crypt      =   comboBoxMenuCrypt.SelectedIndex;
+            data.Save();
+        }
+
+        // ------------------------------------------------------------------------------------------
+        private void LoadData() {
+            var data = Properties.Settings.Default;
+
+            if ( data.Saved ) {
+                textBoxMenuLogin.Text               =   data.NickName;
+                textBoxMenuIP.Text                  =   data.IPAddress;
+                textBoxMenuPort.Text                =   data.Port;
+                comboBoxMenuCrypt.SelectedIndex     =   data.Crypt;
+            } else {
+                comboBoxMenuCrypt.SelectedIndex     =   0;
+                textBoxMenuIP.Text                  =   inside_IP;
+            }
         }
 
         // ##########################################################################################

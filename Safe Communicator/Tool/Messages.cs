@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Safe_Communicator.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,21 +8,9 @@ using System.Windows.Forms;
 
 namespace Safe_Communicator.Tool {
 
-    // ####################################################################################################
-    //  x   x   xxxxx    xxxx    xxxx    xxx     xxxx   xxxxx    xxxx
-    //  xx xx   x       x       x       x   x   x       x       x    
-    //  x x x   xxxx     xxx     xxx    xxxxx   x  xx   xxxx     xxx 
-    //  x   x   x           x       x   x   x   x   x   x           x
-    //  x   x   xxxxx   xxxx    xxxx    x   x    xxxx   xxxxx   xxxx 
-    // ####################################################################################################
     public static class Messages {
 
-        // ##########################################################################################
-        //  xxxx     xxx    xxxxx    xxx       xxxxx   xxxx    xxxx     xxx    xxxx     xxxx
-        //   x  x   x   x     x     x   x      x       x   x   x   x   x   x   x   x   x    
-        //   x  x   xxxxx     x     xxxxx      xxxx    xxxx    xxxx    x   x   xxxx     xxx 
-        //   x  x   x   x     x     x   x      x       x   x   x   x   x   x   x   x       x
-        //  xxxx    x   x     x     x   x      xxxxx   x   x   x   x    xxx    x   x   xxxx 
+        #region Login Incorrect Data Messages
         // ##########################################################################################
         /// <summary> Funckja wyświetlająca powiadomienie o błędynie wpisanym loginie. </summary>
         /// <param name="error_code"> Informacja o zaistniałych błędach. </param>
@@ -70,12 +59,8 @@ namespace Safe_Communicator.Tool {
             MessageBox.Show( title, message, MessageBoxButtons.OK, MessageBoxIcon.Error );
         }
 
-        // ##########################################################################################
-        //  xxxx    xxxxx    xxx    xxxxx    xxxx   xxxxx    xxx    x   x    xxxx
-        //   x  x   x       x   x     x     x         x     x   x   xx  x   x    
-        //   x  x   xxxx    x         x      xxx      x     x   x   x x x    xxx 
-        //   x  x   x       x   x     x         x     x     x   x   x  xx       x
-        //  xxxx    xxxxx    xxx    xxxxx   xxxx    xxxxx    xxx    x   x   xxxx 
+        #endregion Login Incorrect Data Messages
+        #region Closing Application Messages
         // ##########################################################################################
         /// <summary> Funkcja wyświetlająca powiadomienie zapytanie o wyłączenie serwera. </summary>
         /// <returns> Wyłącznik serwera. </returns>
@@ -97,22 +82,9 @@ namespace Safe_Communicator.Tool {
             return result == DialogResult.Yes ? true : false;
         }
 
+        #endregion Closing Application Messages
         // ##########################################################################################
-        //  xxxxx   x   x   xxxxx    xxx    xxxx    x   x    xxx    xxxxx   xxxxx    xxx    x   x
-        //    x     xx  x   x       x   x   x   x   xx xx   x   x     x       x     x   x   xx  x
-        //    x     x x x   xxxx    x   x   xxxx    x x x   xxxxx     x       x     x   x   x x x
-        //    x     x  xx   x       x   x   x   x   x   x   x   x     x       x     x   x   x  xx
-        //  xxxxx   x   x   x        xxx    x   x   x   x   x   x     x     xxxxx    xxx    x   x
-        // ##########################################################################################
-        public static void IPAddresses() {
-            string  title   =   "Twoje adresy IP";
-            string  message =   "Wewnętrzny adres IP: " + Tools.GetInsideIP()
-                            +   "Zewnętrzny adres IP: " + Tools.GetOutsideIP();
-            MessageBox.Show( message, title, MessageBoxButtons.OK, MessageBoxIcon.Information );
-        }
 
-        // ##########################################################################################
     }
 
-    // ####################################################################################################
 }

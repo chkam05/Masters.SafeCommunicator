@@ -30,7 +30,7 @@ namespace Safe_Communicator.Forms {
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
             "0",
             "Server",
             "127.0.0.1"}, -1);
@@ -66,6 +66,7 @@ namespace Safe_Communicator.Forms {
             this.fLPanelClientControl = new System.Windows.Forms.FlowLayoutPanel();
             this.buttonServer = new System.Windows.Forms.Button();
             this.panelMenu = new System.Windows.Forms.Panel();
+            this.panelMenuInfo = new System.Windows.Forms.Panel();
             this.textBoxMenuInfo = new System.Windows.Forms.TextBox();
             this.fLPanelMenuData = new System.Windows.Forms.FlowLayoutPanel();
             this.labelMenuTitle = new System.Windows.Forms.Label();
@@ -82,7 +83,8 @@ namespace Safe_Communicator.Forms {
             this.tLPanelMenuLaunch = new System.Windows.Forms.TableLayoutPanel();
             this.buttonClient = new System.Windows.Forms.Button();
             this.bgWorkerMenuTime = new System.ComponentModel.BackgroundWorker();
-            this.panelMenuInfo = new System.Windows.Forms.Panel();
+            this.labelMenuCrypt = new System.Windows.Forms.Label();
+            this.comboBoxMenuCrypt = new System.Windows.Forms.ComboBox();
             this.menuClient.SuspendLayout();
             this.menuServer.SuspendLayout();
             this.panelServer.SuspendLayout();
@@ -92,9 +94,9 @@ namespace Safe_Communicator.Forms {
             this.panelClientEdit.SuspendLayout();
             this.panelClientUsers.SuspendLayout();
             this.panelMenu.SuspendLayout();
+            this.panelMenuInfo.SuspendLayout();
             this.fLPanelMenuData.SuspendLayout();
             this.tLPanelMenuLaunch.SuspendLayout();
-            this.panelMenuInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuClient
@@ -361,7 +363,7 @@ namespace Safe_Communicator.Forms {
             this.listViewClientUsers.GridLines = true;
             this.listViewClientUsers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewClientUsers.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
+            listViewItem4});
             this.listViewClientUsers.Location = new System.Drawing.Point(0, 32);
             this.listViewClientUsers.Margin = new System.Windows.Forms.Padding(0);
             this.listViewClientUsers.MultiSelect = false;
@@ -433,6 +435,18 @@ namespace Safe_Communicator.Forms {
             this.panelMenu.Size = new System.Drawing.Size(784, 441);
             this.panelMenu.TabIndex = 2;
             // 
+            // panelMenuInfo
+            // 
+            this.panelMenuInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelMenuInfo.Controls.Add(this.textBoxMenuInfo);
+            this.panelMenuInfo.Location = new System.Drawing.Point(396, 20);
+            this.panelMenuInfo.Margin = new System.Windows.Forms.Padding(0);
+            this.panelMenuInfo.Name = "panelMenuInfo";
+            this.panelMenuInfo.Size = new System.Drawing.Size(367, 337);
+            this.panelMenuInfo.TabIndex = 1;
+            // 
             // textBoxMenuInfo
             // 
             this.textBoxMenuInfo.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -460,6 +474,8 @@ namespace Safe_Communicator.Forms {
             this.fLPanelMenuData.Controls.Add(this.textBoxMenuIP);
             this.fLPanelMenuData.Controls.Add(this.labelMenuPort);
             this.fLPanelMenuData.Controls.Add(this.textBoxMenuPort);
+            this.fLPanelMenuData.Controls.Add(this.labelMenuCrypt);
+            this.fLPanelMenuData.Controls.Add(this.comboBoxMenuCrypt);
             this.fLPanelMenuData.Controls.Add(this.labelMenuInsideIPTitle);
             this.fLPanelMenuData.Controls.Add(this.labelMenuInsideIP);
             this.fLPanelMenuData.Controls.Add(this.labelMenuOutsideIPTitle);
@@ -471,7 +487,6 @@ namespace Safe_Communicator.Forms {
             this.fLPanelMenuData.Location = new System.Drawing.Point(0, 0);
             this.fLPanelMenuData.Margin = new System.Windows.Forms.Padding(0);
             this.fLPanelMenuData.Name = "fLPanelMenuData";
-            this.fLPanelMenuData.Padding = new System.Windows.Forms.Padding(24);
             this.fLPanelMenuData.Size = new System.Drawing.Size(784, 377);
             this.fLPanelMenuData.TabIndex = 0;
             this.fLPanelMenuData.WrapContents = false;
@@ -483,7 +498,7 @@ namespace Safe_Communicator.Forms {
             this.labelMenuTitle.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.labelMenuTitle.ForeColor = System.Drawing.Color.White;
             this.labelMenuTitle.Location = new System.Drawing.Point(24, 24);
-            this.labelMenuTitle.Margin = new System.Windows.Forms.Padding(0, 0, 0, 32);
+            this.labelMenuTitle.Margin = new System.Windows.Forms.Padding(24, 24, 0, 32);
             this.labelMenuTitle.Name = "labelMenuTitle";
             this.labelMenuTitle.Size = new System.Drawing.Size(241, 25);
             this.labelMenuTitle.TabIndex = 0;
@@ -495,7 +510,7 @@ namespace Safe_Communicator.Forms {
             this.labelMenuLogin.BackColor = System.Drawing.Color.Transparent;
             this.labelMenuLogin.ForeColor = System.Drawing.Color.White;
             this.labelMenuLogin.Location = new System.Drawing.Point(24, 81);
-            this.labelMenuLogin.Margin = new System.Windows.Forms.Padding(0);
+            this.labelMenuLogin.Margin = new System.Windows.Forms.Padding(24, 0, 0, 0);
             this.labelMenuLogin.Name = "labelMenuLogin";
             this.labelMenuLogin.Size = new System.Drawing.Size(159, 18);
             this.labelMenuLogin.TabIndex = 1;
@@ -504,7 +519,7 @@ namespace Safe_Communicator.Forms {
             // textBoxMenuLogin
             // 
             this.textBoxMenuLogin.Location = new System.Drawing.Point(24, 99);
-            this.textBoxMenuLogin.Margin = new System.Windows.Forms.Padding(0, 0, 0, 16);
+            this.textBoxMenuLogin.Margin = new System.Windows.Forms.Padding(24, 0, 0, 16);
             this.textBoxMenuLogin.Name = "textBoxMenuLogin";
             this.textBoxMenuLogin.Size = new System.Drawing.Size(256, 26);
             this.textBoxMenuLogin.TabIndex = 2;
@@ -516,7 +531,7 @@ namespace Safe_Communicator.Forms {
             this.labelMenuIP.BackColor = System.Drawing.Color.Transparent;
             this.labelMenuIP.ForeColor = System.Drawing.Color.White;
             this.labelMenuIP.Location = new System.Drawing.Point(24, 141);
-            this.labelMenuIP.Margin = new System.Windows.Forms.Padding(0);
+            this.labelMenuIP.Margin = new System.Windows.Forms.Padding(24, 0, 0, 0);
             this.labelMenuIP.Name = "labelMenuIP";
             this.labelMenuIP.Size = new System.Drawing.Size(242, 18);
             this.labelMenuIP.TabIndex = 3;
@@ -525,7 +540,7 @@ namespace Safe_Communicator.Forms {
             // textBoxMenuIP
             // 
             this.textBoxMenuIP.Location = new System.Drawing.Point(24, 159);
-            this.textBoxMenuIP.Margin = new System.Windows.Forms.Padding(0, 0, 0, 16);
+            this.textBoxMenuIP.Margin = new System.Windows.Forms.Padding(24, 0, 0, 16);
             this.textBoxMenuIP.Name = "textBoxMenuIP";
             this.textBoxMenuIP.Size = new System.Drawing.Size(256, 26);
             this.textBoxMenuIP.TabIndex = 4;
@@ -537,7 +552,7 @@ namespace Safe_Communicator.Forms {
             this.labelMenuPort.BackColor = System.Drawing.Color.Transparent;
             this.labelMenuPort.ForeColor = System.Drawing.Color.White;
             this.labelMenuPort.Location = new System.Drawing.Point(24, 201);
-            this.labelMenuPort.Margin = new System.Windows.Forms.Padding(0);
+            this.labelMenuPort.Margin = new System.Windows.Forms.Padding(24, 0, 0, 0);
             this.labelMenuPort.Name = "labelMenuPort";
             this.labelMenuPort.Size = new System.Drawing.Size(203, 18);
             this.labelMenuPort.TabIndex = 5;
@@ -546,7 +561,7 @@ namespace Safe_Communicator.Forms {
             // textBoxMenuPort
             // 
             this.textBoxMenuPort.Location = new System.Drawing.Point(24, 219);
-            this.textBoxMenuPort.Margin = new System.Windows.Forms.Padding(0, 0, 0, 16);
+            this.textBoxMenuPort.Margin = new System.Windows.Forms.Padding(24, 0, 0, 16);
             this.textBoxMenuPort.Name = "textBoxMenuPort";
             this.textBoxMenuPort.Size = new System.Drawing.Size(256, 26);
             this.textBoxMenuPort.TabIndex = 6;
@@ -557,8 +572,8 @@ namespace Safe_Communicator.Forms {
             this.labelMenuInsideIPTitle.AutoSize = true;
             this.labelMenuInsideIPTitle.BackColor = System.Drawing.Color.Transparent;
             this.labelMenuInsideIPTitle.ForeColor = System.Drawing.Color.White;
-            this.labelMenuInsideIPTitle.Location = new System.Drawing.Point(24, 261);
-            this.labelMenuInsideIPTitle.Margin = new System.Windows.Forms.Padding(0, 0, 0, 2);
+            this.labelMenuInsideIPTitle.Location = new System.Drawing.Point(24, 321);
+            this.labelMenuInsideIPTitle.Margin = new System.Windows.Forms.Padding(24, 0, 0, 2);
             this.labelMenuInsideIPTitle.Name = "labelMenuInsideIPTitle";
             this.labelMenuInsideIPTitle.Size = new System.Drawing.Size(166, 18);
             this.labelMenuInsideIPTitle.TabIndex = 7;
@@ -570,8 +585,8 @@ namespace Safe_Communicator.Forms {
             this.labelMenuInsideIP.BackColor = System.Drawing.Color.Transparent;
             this.labelMenuInsideIP.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.labelMenuInsideIP.ForeColor = System.Drawing.Color.White;
-            this.labelMenuInsideIP.Location = new System.Drawing.Point(24, 281);
-            this.labelMenuInsideIP.Margin = new System.Windows.Forms.Padding(0, 0, 0, 16);
+            this.labelMenuInsideIP.Location = new System.Drawing.Point(24, 341);
+            this.labelMenuInsideIP.Margin = new System.Windows.Forms.Padding(24, 0, 0, 16);
             this.labelMenuInsideIP.Name = "labelMenuInsideIP";
             this.labelMenuInsideIP.Size = new System.Drawing.Size(89, 18);
             this.labelMenuInsideIP.TabIndex = 8;
@@ -582,8 +597,8 @@ namespace Safe_Communicator.Forms {
             this.labelMenuOutsideIPTitle.AutoSize = true;
             this.labelMenuOutsideIPTitle.BackColor = System.Drawing.Color.Transparent;
             this.labelMenuOutsideIPTitle.ForeColor = System.Drawing.Color.White;
-            this.labelMenuOutsideIPTitle.Location = new System.Drawing.Point(24, 315);
-            this.labelMenuOutsideIPTitle.Margin = new System.Windows.Forms.Padding(0, 0, 0, 2);
+            this.labelMenuOutsideIPTitle.Location = new System.Drawing.Point(24, 375);
+            this.labelMenuOutsideIPTitle.Margin = new System.Windows.Forms.Padding(24, 0, 0, 2);
             this.labelMenuOutsideIPTitle.Name = "labelMenuOutsideIPTitle";
             this.labelMenuOutsideIPTitle.Size = new System.Drawing.Size(162, 18);
             this.labelMenuOutsideIPTitle.TabIndex = 9;
@@ -595,11 +610,12 @@ namespace Safe_Communicator.Forms {
             this.labelMenuOutsideIP.BackColor = System.Drawing.Color.Transparent;
             this.labelMenuOutsideIP.Font = new System.Drawing.Font("Verdana", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.labelMenuOutsideIP.ForeColor = System.Drawing.Color.White;
-            this.labelMenuOutsideIP.Location = new System.Drawing.Point(24, 335);
-            this.labelMenuOutsideIP.Margin = new System.Windows.Forms.Padding(0);
+            this.labelMenuOutsideIP.Location = new System.Drawing.Point(24, 395);
+            this.labelMenuOutsideIP.Margin = new System.Windows.Forms.Padding(24, 0, 0, 24);
             this.labelMenuOutsideIP.Name = "labelMenuOutsideIP";
-            this.labelMenuOutsideIP.Size = new System.Drawing.Size(0, 18);
+            this.labelMenuOutsideIP.Size = new System.Drawing.Size(67, 18);
             this.labelMenuOutsideIP.TabIndex = 10;
+            this.labelMenuOutsideIP.Text = "0.0.0.0";
             // 
             // tLPanelMenuLaunch
             // 
@@ -636,17 +652,31 @@ namespace Safe_Communicator.Forms {
             // 
             this.bgWorkerMenuTime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorkerMenuTimeFunc);
             // 
-            // panelMenuInfo
+            // labelMenuCrypt
             // 
-            this.panelMenuInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelMenuInfo.Controls.Add(this.textBoxMenuInfo);
-            this.panelMenuInfo.Location = new System.Drawing.Point(396, 20);
-            this.panelMenuInfo.Margin = new System.Windows.Forms.Padding(0);
-            this.panelMenuInfo.Name = "panelMenuInfo";
-            this.panelMenuInfo.Size = new System.Drawing.Size(367, 337);
-            this.panelMenuInfo.TabIndex = 1;
+            this.labelMenuCrypt.AutoSize = true;
+            this.labelMenuCrypt.BackColor = System.Drawing.Color.Transparent;
+            this.labelMenuCrypt.ForeColor = System.Drawing.Color.White;
+            this.labelMenuCrypt.Location = new System.Drawing.Point(24, 261);
+            this.labelMenuCrypt.Margin = new System.Windows.Forms.Padding(24, 0, 0, 0);
+            this.labelMenuCrypt.Name = "labelMenuCrypt";
+            this.labelMenuCrypt.Size = new System.Drawing.Size(155, 18);
+            this.labelMenuCrypt.TabIndex = 11;
+            this.labelMenuCrypt.Text = "Rodzaj szyfrowania";
+            // 
+            // comboBoxMenuCrypt
+            // 
+            this.comboBoxMenuCrypt.FormattingEnabled = true;
+            this.comboBoxMenuCrypt.Items.AddRange(new object[] {
+            "Brak szyfrowania",
+            "Szyfrowanie RSA",
+            "Szyfrowanie ElGamal\'a"});
+            this.comboBoxMenuCrypt.Location = new System.Drawing.Point(24, 279);
+            this.comboBoxMenuCrypt.Margin = new System.Windows.Forms.Padding(24, 0, 0, 16);
+            this.comboBoxMenuCrypt.Name = "comboBoxMenuCrypt";
+            this.comboBoxMenuCrypt.Size = new System.Drawing.Size(256, 26);
+            this.comboBoxMenuCrypt.TabIndex = 13;
+            this.comboBoxMenuCrypt.Text = "Brak szyfrowania";
             // 
             // MainForm
             // 
@@ -681,11 +711,11 @@ namespace Safe_Communicator.Forms {
             this.panelClientEdit.PerformLayout();
             this.panelClientUsers.ResumeLayout(false);
             this.panelMenu.ResumeLayout(false);
+            this.panelMenuInfo.ResumeLayout(false);
+            this.panelMenuInfo.PerformLayout();
             this.fLPanelMenuData.ResumeLayout(false);
             this.fLPanelMenuData.PerformLayout();
             this.tLPanelMenuLaunch.ResumeLayout(false);
-            this.panelMenuInfo.ResumeLayout(false);
-            this.panelMenuInfo.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -741,6 +771,8 @@ namespace Safe_Communicator.Forms {
         private System.Windows.Forms.ColumnHeader colName;
         private System.Windows.Forms.ColumnHeader colIP;
         private System.Windows.Forms.Panel panelMenuInfo;
+        private System.Windows.Forms.Label labelMenuCrypt;
+        private System.Windows.Forms.ComboBox comboBoxMenuCrypt;
     }
 
 }

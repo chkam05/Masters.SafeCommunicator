@@ -50,13 +50,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\ClientData.cs" />
+    <Compile Include="Crypt\CryptType.cs" />
+    <Compile Include="Classes\Errors.cs" />
     <Compile Include="Classes\Message.cs" />
     <Compile Include="Connectors\Client.cs" />
     <Compile Include="Connectors\Server.cs" />
+    <Compile Include="Crypt\ElGamal.cs" />
+    <Compile Include="Crypt\ICrypt.cs" />
     <Compile Include="Enumerators\MessageModifier.cs" />
     <Compile Include="Enumerators\MessageType.cs" />
     <Compile Include="Tool\DataStatic.cs" />
-    <Compile Include="Tool\ERSA.cs" />
+    <Compile Include="Crypt\ERSA.cs" />
     <Compile Include="Tool\Tools.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>

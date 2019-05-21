@@ -5,21 +5,22 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Safe_Communicator.Tool {
+namespace Safe_Communicator.Crypt {
 
-    // ##########################################################################################
-    public class ERSA {
+    public class ERSA : ICrypt {
         
         private string          publicKey;
         private RSAParameters   privateKey;
         private int             keyLong         =   2048;
 
         // ################################################################################
+        /// <summary> Konstruktor klasy szyfrowania RSA. </summary>
         public ERSA() {
             GenerateKeys();
         }
 
-        // ################################################################################
+        // --------------------------------------------------------------------------------
+        /// <summary> Funkcja generująca klucze. </summary>
         public void GenerateKeys() {
             var generator               =   new RSACryptoServiceProvider(keyLong);
             generator.PersistKeyInCsp   =   false;
@@ -28,6 +29,10 @@ namespace Safe_Communicator.Tool {
         }
 
         // --------------------------------------------------------------------------------
+        /// <summary> Funkcja szyfrująca dane z użyciem zewnętrznego klucza publicznego. </summary>
+        /// <param name="data"> Wiadomość do zaszyfrowania. </param>
+        /// <param name="publicKey"> Klucz publiczny. </param>
+        /// <returns> Zaszyfrowana wiadomość. </returns>
         public string Encrypt( string data, string publicKey ) {
             byte[]  result;
             byte[]  byteData            =   Encoding.ASCII.GetBytes( data );
@@ -39,6 +44,9 @@ namespace Safe_Communicator.Tool {
         }
 
         // --------------------------------------------------------------------------------
+        /// <summary> Funkcja deszyfrująca wiadomość z użyciem wewnętrznego klucza prywatnego. </summary>
+        /// <param name="data"> Zaszywfrowana wiadomość. </param>
+        /// <returns> Zdeszyfrowana wiadomość. </returns>
         public string Decrypt( string data ) {
             byte[]      result;
             String[]    stringArray         =   data.Split('-');
@@ -53,11 +61,12 @@ namespace Safe_Communicator.Tool {
             return  Encoding.ASCII.GetString( result );
         }
 
-        // ################################################################################
-        public string PublicStringKey { get { return publicKey; } }
+        // --------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająca klucz publiczny. </summary>
+        /// <returns> Klucz publiczny. </returns>
+        public string GetPublicKey() { return publicKey; }
 
         // ################################################################################
     }
 
-    // ##########################################################################################
 }

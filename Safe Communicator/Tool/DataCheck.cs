@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Safe_Communicator.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,15 +7,10 @@ using System.Threading.Tasks;
 
 namespace Safe_Communicator.Tool {
 
-    // ####################################################################################################
-    //  xxxx     xxx    xxxxx    xxx        xxx    x   x   xxxxx    xxx    x   x
-    //   x  x   x   x     x     x   x      x   x   x   x   x       x   x   x  x 
-    //   x  x   xxxxx     x     xxxxx      x       xxxxx   xxxx    x       xxx  
-    //   x  x   x   x     x     x   x      x   x   x   x   x       x   x   x  x 
-    //  xxxx    x   x     x     x   x       xxx    x   x   xxxxx    xxx    x   x
-    // ####################################################################################################
     public static class DataCheck {
 
+        #region Login Data Checker
+        // ##########################################################################################
         /// <summary> Funckja sprawdzająca poprawność wpisanego loginu użytkownika. </summary>
         /// <param name="login"> Zmienna przechowująca login użytkownika. </param>
         /// <param name="error_code"> Informacja zwrotna o potencjalnych błędach. </param>
@@ -55,8 +51,9 @@ namespace Safe_Communicator.Tool {
             return true;
         }
 
-        // ------------------------------------------------------------------------------------------
+        #endregion Login Data Checker
+        // ##########################################################################################
+
     }
 
-    // ####################################################################################################
 }

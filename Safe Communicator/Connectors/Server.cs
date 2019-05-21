@@ -1,4 +1,5 @@
 ﻿using Safe_Communicator.Classes;
+using Safe_Communicator.Crypt;
 using Safe_Communicator.Enumerators;
 using Safe_Communicator.Tool;
 using System;
@@ -15,13 +16,6 @@ using Message = Safe_Communicator.Classes.Message;
 
 namespace Safe_Communicator.Connectors {
 
-    // ####################################################################################################
-    //   xxxx   xxxxx   xxxx    x   x   xxxxx   xxxx 
-    //  x       x       x   x   x   x   x       x   x
-    //   xxx    xxxx    xxxx    x   x   xxxx    xxxx 
-    //      x   x       x   x    x x    x       x   x
-    //  xxxx    xxxxx   x   x     x     xxxxx   x   x
-    // ####################################################################################################
     public class Server {
         
         public  delegate        void    InvokeInterface();
@@ -43,7 +37,7 @@ namespace Safe_Communicator.Connectors {
         public  int                 Port                { get; }        =   65534;
         public  int                 BufferSize          { get; }        =   2048;
 
-        private ERSA                encryptionServices;
+        private ERSA                encryptionServicesRSA;
 
         private byte[]              buffer;
         private Socket              srvSocket;
@@ -57,12 +51,7 @@ namespace Safe_Communicator.Connectors {
         public  int                 ReConnectTimeOut    { get; set; }   =   0;
         public  InvokeCommand       FuncShutDown        { get; set; }
 
-        // ##########################################################################################
-        //   xxx     xxx    x   x    xxxx   xxxxx   xxxx    x   x    xxx    xxxxx    xxx    xxxx 
-        //  x   x   x   x   xx  x   x         x     x   x   x   x   x   x     x     x   x   x   x
-        //  x       x   x   x x x    xxx      x     xxxx    x   x   x         x     x   x   xxxx 
-        //  x   x   x   x   x  xx       x     x     x   x   x   x   x   x     x     x   x   x   x
-        //   xxx     xxx    x   x   xxxx      x     x   x    xxx     xxx      x      xxx    x   x
+        #region Contructor
         // ##########################################################################################
         /// <summary> Konstruktor obiektu klasy Server. </summary>
         /// <param name="username"> Nazwa serwera, która będzie zwracana jako informacja. </param>
@@ -73,15 +62,11 @@ namespace Safe_Communicator.Connectors {
             this.ServerIP   =   ip;
             this.Port       =   port;
 
-            this.encryptionServices = new ERSA();
+            this.encryptionServicesRSA  =   new ERSA();
         }
 
-        // ##########################################################################################
-        //  x   x    xxx    x   x    xxx     xxxx   x   x   xxxxx   x   x   xxxxx
-        //  xx xx   x   x   xx  x   x   x   x       xx xx   x       xx  x     x  
-        //  x x x   xxxxx   x x x   xxxxx   x  xx   x x x   xxxx    x x x     x  
-        //  x   x   x   x   x  xx   x   x   x   x   x   x   x       x  xx     x  
-        //  x   x   x   x   x   x   x   x    xxxx   x   x   xxxxx   x   x     x  
+        #endregion Constructor
+        #region Server Managment
         // ##########################################################################################
         /// <summary>  Funkcja konfigurująca i uruchamiająca funkcje serwera z jego podstawowymi elementami. </summary>
         public void Start() {
@@ -125,12 +110,8 @@ namespace Safe_Communicator.Connectors {
             buffer          =   null;
         }
 
-        // ##########################################################################################
-        //  x   x    xxx    x   x   xxxx    x       xxxxx   xxxx 
-        //  x   x   x   x   xx  x    x  x   x       x       x   x
-        //  xxxxx   xxxxx   x x x    x  x   x       xxxx    xxxx 
-        //  x   x   x   x   x  xx    x  x   x       x       x   x
-        //  x   x   x   x   x   x   xxxx    xxxxx   xxxxx   x   x
+        #endregion Server Managment
+        #region Communication Handlers
         // ##########################################################################################
         /// <summary> Funkcja przyłączająca klienta do serwera. </summary>
         /// <param name="asyncResult"> Podłączany klient. </param>
@@ -170,8 +151,8 @@ namespace Safe_Communicator.Connectors {
                 Array.Copy( client.Buffer, buffer, bufferSize );
                 Message newMessage      =   Message.ReadMessage( Encoding.ASCII.GetString( buffer ) );
                 
-                // DECRYPTION
-                newMessage.Decrypt( encryptionServices, client.Encrypted );
+                //  Deszyfrowanie wiadomości po otrzymaniu.
+                newMessage.Decrypt( encryptionServicesRSA, client.Encrypted );
                 
                 bool    executed        =   ExecuteClientCommand( newMessage, client );
                 
@@ -204,13 +185,11 @@ namespace Safe_Communicator.Connectors {
             socekt.EndSend( asyncResult );
         }
 
+        #endregion Communication Handlers
+        #region Message Functions
         // ##########################################################################################
-        //  xxxxx   x   x   x   x    xxx    xxxxx   xxxxx    xxx    x   x    xxxx
-        //  x       x   x   xx  x   x   x     x       x     x   x   xx  x   x    
-        //  xxxx    x   x   x x x   x         x       x     x   x   x x x    xxx 
-        //  x       x   x   x  xx   x   x     x       x     x   x   x  xx       x
-        //  x        xxx    x   x    xxx      x     xxxxx    xxx    x   x   xxxx 
-        // ##########################################################################################
+        /// <summary> Funkcja wykonująca wywołanie polecenia z konsoli serwera. </summary>
+        /// <param name="message"> Polecenie z konsoli serwera. </param>
         public void SendCommand( string message ) {
             bool    executed    =   ExecuteServerCommand( message );
             if ( !executed ) { SendBroadcast( message ); }
@@ -234,8 +213,8 @@ namespace Safe_Communicator.Connectors {
         private void SendMessage( ClientData client, Message message ) {
             Socket          socket  =   client.Socket;
 
-            // ENCRYPTION
-            if ( client.Encrypted ) { message.Encrypt( encryptionServices, client.Key ); }
+            //  Szyfrowanie wiadomości do wsyłania
+            if ( client.Encrypted ) { message.Encrypt( encryptionServicesRSA, client.Key ); }
 
             byte[]          buffer  =   Encoding.ASCII.GetBytes( message.ToString() );
             Console.Write( message.ToString() );
@@ -245,19 +224,12 @@ namespace Safe_Communicator.Connectors {
             client.BeginReciveMessages();
         }
 
+        #endregion Message Functions
+        #region Commands from Server
         // ##########################################################################################
-        //   xxxx   xxxxx   xxxx    x   x   xxxxx   xxxx 
-        //  x       x       x   x   x   x   x       x   x
-        //   xxx    xxxx    xxxx    x   x   xxxx    xxxx 
-        //      x   x       x   x    x x    x       x   x
-        //  xxxx    xxxxx   x   x     x     xxxxx   x   x
-        //
-        //   xxx     xxx    x   x   x   x    xxx    x   x   xxxx     xxxx
-        //  x   x   x   x   xx xx   xx xx   x   x   xx  x    x  x   x    
-        //  x       x   x   x x x   x x x   xxxxx   x x x    x  x    xxx 
-        //  x   x   x   x   x   x   x   x   x   x   x  xx    x  x       x
-        //   xxx     xxx    x   x   x   x   x   x   x   x   xxxx    xxxx 
-        // ##########################################################################################
+        /// <summary> Funkcja sprawdzająca poprawość polecenia i egzekwująca jego wykonanie. </summary>
+        /// <param name="command"> Polecenie (komenda) dla serwera. </param>
+        /// <returns> Informacja o poprawnym wykonaniu polecenia. </returns>
         private bool ExecuteServerCommand( string command ) {
             string[]    arguments   =   command.Split( ' ' );
             bool        result      =   true;
@@ -276,6 +248,7 @@ namespace Safe_Communicator.Connectors {
 
         // ------------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja wyświetlajaca pomoc dla wspieranych poleceń. </summary>
         private void ShowHelpCommand() {
             string  message =   
                 "<none>                    - Sends message to all connected clients" + Environment.NewLine +
@@ -288,6 +261,8 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja odłączająca klienta od serwera. </summary>
+        /// <param name="arguments"> Tablica argumentów (id/nazwa podłączonego klienta). </param>
         private void KickClientCommand( string[] arguments ) {
             int         identifier  =   -1;
             ClientData  client;
@@ -303,6 +278,7 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcaj wyświetlająca listę podłączonych klientów. </summary>
         private void ShowClientListCommand() {
             if ( srvClients.Count <= 0 ) { UpdateUI( "( i ) At this point, there are no connected clients." ); }
             foreach( string[] client in GetClientList( null ) ) {
@@ -311,6 +287,8 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja wysyłająca wiadomość do określonego klienta. </summary>
+        /// <param name="arguments"> Tablica argumentów (id/nazwa podłączonego klienta), wiadomość. </param>
         private void SendMessageCommand( string[] arguments ) {
             int         identifier  =   -1;
             ClientData  client;
@@ -324,7 +302,7 @@ namespace Safe_Communicator.Connectors {
             catch ( Exception ) { UpdateUI( "( ! ) Client with specified identifier, does not exist." ); return; }
 
             try {
-                string  content     =   Tools.ConcatLines( arguments, 2, arguments.Length, Environment.NewLine );
+                string  content     =   Tools.ConcatLines( arguments, 2, arguments.Length, " " );
                 Message message     =   new Message( 0, identifier, DateTime.Now, "", content );
                 SendMessage( client, message );
             }
@@ -332,19 +310,13 @@ namespace Safe_Communicator.Connectors {
             catch ( Exception ) { return; }
         }
 
+        #endregion Commands from Server
+        #region Commands from Client
         // ##########################################################################################
-        //   xxx    x       xxxxx   xxxxx   x   x   xxxxx
-        //  x   x   x         x     x       xx  x     x  
-        //  x       x         x     xxxx    x x x     x  
-        //  x   x   x         x     x       x  xx     x  
-        //   xxx    xxxxx   xxxxx   xxxxx   x   x     x  
-        //
-        //   xxx     xxx    x   x   x   x    xxx    x   x   xxxx     xxxx
-        //  x   x   x   x   xx xx   xx xx   x   x   xx  x    x  x   x    
-        //  x       x   x   x x x   x x x   xxxxx   x x x    x  x    xxx 
-        //  x   x   x   x   x   x   x   x   x   x   x  xx    x  x       x
-        //   xxx     xxx    x   x   x   x   x   x   x   x   xxxx    xxxx 
-        // ##########################################################################################
+        /// <summary> Funkcja sprawdzająca poprawość polecenia zdalengo i egzekwująca jego wykonanie. </summary>
+        /// <param name="message"> Paczka wiadomości z poleceniem zdalnym (komendą) klienta. </param>
+        /// <param name="sender"> Klient wysyłający polecenie. </param>
+        /// <returns> Informacja o poprawnym wykonaniu polecenia. </returns>
         private bool ExecuteClientCommand( Message message, ClientData sender ) {
             string[]    arguments   =   message.command.Split( ' ' );
             bool        result      =   true;
@@ -360,29 +332,51 @@ namespace Safe_Communicator.Connectors {
 
         // ------------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja konfigurująca serwera z danymi klienta. </summary>
+        /// <param name="message"> Wiadomość konfiguracyjna od klienta. </param>
+        /// <param name="sender"> Klient wysyłający polecenie. </param>
         private void ConfigureCommand( string message, ClientData sender ) {
             string[]    arguments   =   Tools.ReadLines( message );
+            int         ctpye       =   0;
+            string      publicKey   =   "";
 
+            //  Pobranie publicznego klucza szyfrującego od klienta.
             try {
-                sender.Name =   arguments[0];
-                // RECIVE KEY
-                sender.Key  =   arguments[1];
+                sender.Name         =   arguments[0];
+                int.TryParse( arguments[1], out ctpye );
+                sender.CryptType    =   (CryptType) ctpye;
+                sender.Key          =   arguments[2];
             }
             catch ( IndexOutOfRangeException ) { /* Not transferred all required data */ }
             catch ( Exception ) { /* Unknown Data Error Exception */ }
 
-            // SEND KEY
-            string  publicKey   =   encryptionServices.PublicStringKey;
+            //  Konfiguracja publicznego klucza szyfrującego od klienta
+            try { if ( ctpye != 0 && arguments[2] != "" ) { sender.Encrypted = true; } }
+            catch { /* NOT CRYPTED */ }
+
+            //  Konfiguracja publicznego klucza szyfrującego wiadomości do wsyłania do klienta.
+            if ( sender.Encrypted ) {
+                switch ( sender.CryptType ) {
+                    case CryptType.RSA:
+                        publicKey   =   encryptionServicesRSA.GetPublicKey();
+                        break;
+                    case CryptType.ElGamal:
+                        break;
+                }
+            }
+
             string  content     =   Tools.ConcatLines(
-                new string[] { Username, sender.Identifier.ToString(), publicKey, "<end>" }, 0, 3, Environment.NewLine );
+                new string[] { Username, sender.Identifier.ToString(), publicKey, "<end>" },
+                0, 3, Environment.NewLine );
+            
             Message newMessage  =   new Message( 0, sender.Identifier, DateTime.Now, "/config", content );
             SendMessage( sender, newMessage );
-
-            try { if ( arguments[1] != "" ) { sender.Encrypted = true; } } catch { /* NOT CRYPTED */ }
             UpdateClientList();
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja wysyłająca do klienta listę podłączonych klientów. </summary>
+        /// <param name="sender"> Klient do którego ma zostać przesłana lista. </param>
         private void SendListCommand( ClientData sender ) {
             string[][]  clients     =   GetClientList( sender );
             string      content     =   "";
@@ -397,14 +391,10 @@ namespace Safe_Communicator.Connectors {
             SendMessage( sender, newMessage );
         }
 
+        #endregion Commands from Client
+        #region Clients Managment
         // ##########################################################################################
-        //   xxx    x       xxxxx   xxxxx   x   x   xxxxx    xxxx
-        //  x   x   x         x     x       xx  x     x     x    
-        //  x       x         x     xxxx    x x x     x      xxx 
-        //  x   x   x         x     x       x  xx     x         x
-        //   xxx    xxxxx   xxxxx   xxxxx   x   x     x     xxxx 
-        // ##########################################################################################
-         /// <summary> Funkcja wykonująca akcję odnowienia połączenia z klientem. </summary>
+        /// <summary> Funkcja wykonująca akcję odnowienia połączenia z klientem. </summary>
         private void LoopReconnect( IAsyncResult asyncResult, ClientData client ) {
             if ( client.ReconnectAttempt >= ReConnectTimeOut ) { DisconnectClient( client ); }
             if ( asyncResult != null ) {
@@ -417,6 +407,9 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająca klienta o określonym indentyfikatorze. </summary>
+        /// <param name="identifier"> Identyfikator klienta. </param>
+        /// <returns> Klient. </returns>
         public ClientData GetClient( int identifier ) {
             try { return srvClients[ srvClients.FindIndex( ClientData => ClientData.Identifier == identifier ) ]; }
             catch ( NullReferenceException ) { return null; }
@@ -424,6 +417,9 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająca klienta o określonej nazwie użytkownika. </summary>
+        /// <param name="name"> Nazwa użytkownika klienta. </param>
+        /// <returns> Klient. </returns>
         public ClientData GetClient( string name ) {
             try { return srvClients[ srvClients.FindIndex( ClientData => ClientData.Name == name ) ]; }
             catch ( NullReferenceException ) { return null; }
@@ -431,6 +427,9 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająca klienta o określonym adresie IP. </summary>
+        /// <param name="ipAddress"> Adres IP klienta. </param>
+        /// <returns> Klient. </returns>
         public ClientData GetClient( IPAddress ipAddress ) {
             try { return srvClients[ srvClients.FindIndex( ClientData => ClientData.GetIPAddress() == ipAddress ) ]; }
             catch ( NullReferenceException ) { return null; }
@@ -438,6 +437,9 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająca listę podłączonych klientów. </summary>
+        /// <param name="currentClient"> Klient który ma zostać pomienięty. </param>
+        /// <returns> Tablica klientów z tablicą ich właściwości. </returns>
         public string[][] GetClientList( ClientData currentClient ) {
             List<string[]>    result  =   new List<string[]>();
             foreach( ClientData client in srvClients ) {
@@ -452,6 +454,7 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Globalne wysyłanie list podłaczonych klientów. </summary>
         private void UpdateClientList() {
             if ( srvClients == null ) { return; }
             foreach ( ClientData client in srvClients ) { SendListCommand( client ); }
@@ -485,12 +488,8 @@ namespace Safe_Communicator.Connectors {
             for ( int i = srvClients.Count-1; i >= 0; i-- ) { DisconnectClient( srvClients[i] ); }
         }
 
-        // ##########################################################################################
-        //  xxxxx   x   x   xxxxx   xxxxx   xxxx    xxxxx    xxx     xxx    xxxxx
-        //    x     xx  x     x     x       x   x   x       x   x   x   x   x    
-        //    x     x x x     x     xxxx    xxxx    xxxx    xxxxx   x       xxxx 
-        //    x     x  xx     x     x       x   x   x       x   x   x   x   x    
-        //  xxxxx   x   x     x     xxxxx   x   x   x       x   x    xxx    xxxxx
+        #endregion Clients Managment
+        #region Interface
         // ##########################################################################################
         /// <summary> Funkcja aktualizująca podgląd wiadomości w interfejsie aplikacji. </summary>
         /// <param name="message"> Wiadomość która ma zostać wyświetlona. </param>
@@ -509,12 +508,8 @@ namespace Safe_Communicator.Connectors {
             } ));
         }
 
-        // ##########################################################################################
-        //   xxx     xxx    x   x   xxxxx   xxxxx    xxxx
-        //  x   x   x   x   xx  x   x         x     x    
-        //  x       x   x   x x x   xxxx      x     x  xx
-        //  x   x   x   x   x  xx   x         x     x   x
-        //   xxx     xxx    x   x   x       xxxxx    xxxx
+        #endregion Interface
+        #region Server Status
         // ##########################################################################################
         /// <summary> Informacja o aktywności serwera. </summary>
         public bool IsActive {
@@ -522,7 +517,7 @@ namespace Safe_Communicator.Connectors {
         }
 
         // ------------------------------------------------------------------------------------------
-        /// <summary> Informacja o aktuwnosci serwera (oczekującego na klienta). </summary>
+        /// <summary> Informacja o aktywnosci serwera (oczekującego na klienta). </summary>
         public bool IsUp {
             get {
                 bool        result      =   false;
@@ -576,6 +571,7 @@ namespace Safe_Communicator.Connectors {
             get { return srvClients == null ? 0 : srvClients.Count; }
         }
 
+        #endregion Server Status
         // ##########################################################################################
 
     }

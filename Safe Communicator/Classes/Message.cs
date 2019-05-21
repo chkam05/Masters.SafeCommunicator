@@ -1,4 +1,5 @@
-﻿using Safe_Communicator.Tool;
+﻿using Safe_Communicator.Crypt;
+using Safe_Communicator.Tool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,6 @@ using System.Threading.Tasks;
 
 namespace Safe_Communicator.Classes {
 
-    // ####################################################################################################
-    //  x   x   xxxxx    xxxx    xxxx    xxx     xxxx   xxxxx
-    //  xx xx   x       x       x       x   x   x       x    
-    //  x x x   xxxx     xxx     xxx    xxxxx   x  xx   xxxx 
-    //  x   x   x           x       x   x   x   x   x   x    
-    //  x   x   xxxxx   xxxx    xxxx    x   x    xxxx   xxxxx
-    // ####################################################################################################
     public class Message {
         
         public  int         senderId    { get; set; }
@@ -22,13 +16,14 @@ namespace Safe_Communicator.Classes {
         public  string      command     { get; set; }
         public  string      message     { get; set; }
 
+        #region Constructor
         // ##########################################################################################
-        //   xxx     xxx    x   x    xxxx   xxxxx   xxxx    x   x    xxx    xxxxx    xxx    xxxx 
-        //  x   x   x   x   xx  x   x         x     x   x   x   x   x   x     x     x   x   x   x
-        //  x       x   x   x x x    xxx      x     xxxx    x   x   x         x     x   x   xxxx 
-        //  x   x   x   x   x  xx       x     x     x   x   x   x   x   x     x     x   x   x   x
-        //   xxx     xxx    x   x   xxxx      x     x   x    xxx     xxx      x      xxx    x   x
-        // ##########################################################################################
+        /// <summary> Konstruktor klasy paczki wiadomości. </summary>
+        /// <param name="sender_id"> ID nadawcy. </param>
+        /// <param name="reciver_id"> ID odbiorcy. </param>
+        /// <param name="time"> Data nadania wiadomości. </param>
+        /// <param name="command"> Zawarte polecenie (komenda) serwer - klient. </param>
+        /// <param name="message"> Zawartość wiadomości. </param>
         public Message( int sender_id, int reciver_id, DateTime time, string command, string message ) {
             this.senderId   =   sender_id;
             this.reciverId  =   reciver_id;
@@ -37,23 +32,30 @@ namespace Safe_Communicator.Classes {
             this.message    =   message;
         }
 
-        // ------------------------------------------------------------------------------------------
-        public void Encrypt( ERSA ersa, string publicKey ) {
-            this.message    =   ersa.Encrypt( this.message, publicKey );
+        #endregion Constructor
+        #region Cryptography
+        // ##########################################################################################
+        /// <summary> Funkcja szyfrująca wewnętrznie wiadomość. </summary>
+        /// <param name="crypt"> Klasa szyfrująca. </param>
+        /// <param name="publicKey"> Klucz publiczny. </param>
+        public void Encrypt( ICrypt crypt, string publicKey ) {
+            this.message = crypt.Encrypt( this.message, publicKey );
         }
 
         // ------------------------------------------------------------------------------------------
-        public void Decrypt( ERSA ersa, bool decrypt ) {
-            if ( decrypt ) { this.message = ersa.Decrypt( this.message ); }
+        /// <summary> Funkcja deszyfrująca wewnętrznie wiadomość. </summary>
+        /// <param name="crypt"> Klasa szyfrująca. </param>
+        /// <param name="decrypt"> Informacja czy wiadomość jest zaszyfrowana. </param>
+        public void Decrypt( ICrypt crypt, bool decrypt ) {
+            if ( decrypt ) { this.message = crypt.Decrypt( this.message ); }
         }
 
+        #endregion Cryptography
+        #region Message Mangament
         // ##########################################################################################
-        //  xxxx    xxxxx    xxx    xxxx    xxxxx   xxxx 
-        //  x   x   x       x   x    x  x   x       x   x
-        //  xxxx    xxxx    xxxxx    x  x   xxxx    xxxx 
-        //  x   x   x       x   x    x  x   x       x   x
-        //  x   x   xxxxx   x   x   xxxx    xxxxx   x   x
-        // ##########################################################################################
+        /// <summary> Funkcja konwertująca ciąg danych sprasowanych na wiadomość. </summary>
+        /// <param name="message"> Ciąg znaków sprasowanej wiadomości. </param>
+        /// <returns></returns>
         public static Message ReadMessage( string message ) {
             string[]    lines   =   Tools.ReadLines( message );
             
@@ -64,13 +66,9 @@ namespace Safe_Communicator.Classes {
             return new Message( sender_id, reciver_id, time_send, lines[3], Tools.ConcatLines( lines, 4, lines.Length, Environment.NewLine ) );
         }
 
-        // ##########################################################################################
-        //   xxx     xxx    x   x   xxxx    xxxxx   x       xxxxx
-        //  x   x   x   x   xx xx   x   x     x     x       x    
-        //  x       x   x   x x x   xxxx      x     x       xxxx 
-        //  x   x   x   x   x   x   x         x     x       x    
-        //   xxx     xxx    x   x   x       xxxxx   xxxxx   xxxxx
-        // ##########################################################################################
+        // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająca wiadomość jako sprasowany ciąg znaków do wysłania. </summary>
+        /// <returns> Wiadomość jako sprasowany ciąg znaków. </returns>
         public override string ToString() {
             return  senderId.ToString() + Environment.NewLine +
                     reciverId.ToString() + Environment.NewLine +
@@ -79,8 +77,8 @@ namespace Safe_Communicator.Classes {
                     message.ToString();
         }
 
+        #endregion Message Mangament
         // ##########################################################################################
     }
 
-    // ####################################################################################################
 }
