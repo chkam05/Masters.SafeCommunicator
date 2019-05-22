@@ -59,6 +59,12 @@
     <Compile Include="Crypt\ICrypt.cs" />
     <Compile Include="Enumerators\MessageModifier.cs" />
     <Compile Include="Enumerators\MessageType.cs" />
+    <Compile Include="Forms\TestForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestForm.Designer.cs">
+      <DependentUpon>TestForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tool\DataStatic.cs" />
     <Compile Include="Crypt\ERSA.cs" />
     <Compile Include="Tool\Tools.cs" />
@@ -74,6 +80,9 @@
     <Compile Include="Tool\Messages.cs" />
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TestForm.resx">
+      <DependentUpon>TestForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

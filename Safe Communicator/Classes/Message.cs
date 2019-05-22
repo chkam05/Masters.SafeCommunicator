@@ -39,6 +39,7 @@ namespace Safe_Communicator.Classes {
         /// <param name="crypt"> Klasa szyfrująca. </param>
         /// <param name="publicKey"> Klucz publiczny. </param>
         public void Encrypt( ICrypt crypt, string publicKey ) {
+            if ( crypt == null ) { return; }
             this.message = crypt.Encrypt( this.message, publicKey );
         }
 
@@ -47,6 +48,7 @@ namespace Safe_Communicator.Classes {
         /// <param name="crypt"> Klasa szyfrująca. </param>
         /// <param name="decrypt"> Informacja czy wiadomość jest zaszyfrowana. </param>
         public void Decrypt( ICrypt crypt, bool decrypt ) {
+            if ( crypt == null ) { return; }
             if ( decrypt ) { this.message = crypt.Decrypt( this.message ); }
         }
 

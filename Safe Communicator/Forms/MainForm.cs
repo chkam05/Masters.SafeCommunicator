@@ -155,8 +155,13 @@ namespace Safe_Communicator.Forms {
                     DataStatic.ShortDayOfWeek[(int) dateTime.DayOfWeek], dateTime.Day,
                     DataStatic.ShortMonthName[dateTime.Month-1], dateTime.Year );
                 
-                if ( menuClient.Visible ) { menuItemClientTimeDate.Text = result; }
-                if ( menuServer.Visible ) { menuItemServerTimeDate.Text = result; }
+                if ( this != null ) {
+                    this.Invoke( new Action( () => {
+                        if ( menuClient.Visible ) { menuItemClientTimeDate.Text = result; }
+                        if ( menuServer.Visible ) { menuItemServerTimeDate.Text = result; }
+                    } ) );
+                }
+
                 if ( ((BackgroundWorker)sender).CancellationPending ) { break; }
                 Task.Delay( 1000 );
             }

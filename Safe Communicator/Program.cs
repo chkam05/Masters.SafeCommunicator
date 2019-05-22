@@ -15,12 +15,18 @@ namespace Safe_Communicator {
     // ####################################################################################################
     public static class Program {
         
+        private static  bool    enableTest  =   false;
+
         [STAThread]
         /// <summary> Funkcja główna, tworząca okno główne i uruchamiające wątek do jego obsługi. </summary>
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run( new Forms.MainForm() );
+
+            if ( enableTest )
+                Application.Run( new Forms.Test() );
+            else
+                Application.Run( new Forms.MainForm() );
         }
 
     }

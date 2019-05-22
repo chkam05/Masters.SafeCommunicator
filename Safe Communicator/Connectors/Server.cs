@@ -38,6 +38,7 @@ namespace Safe_Communicator.Connectors {
         public  int                 BufferSize          { get; }        =   2048;
 
         private ERSA                encryptionServicesRSA;
+        private ElGamal             encryptionServicesElGamal;
 
         private byte[]              buffer;
         private Socket              srvSocket;
@@ -62,7 +63,8 @@ namespace Safe_Communicator.Connectors {
             this.ServerIP   =   ip;
             this.Port       =   port;
 
-            this.encryptionServicesRSA  =   new ERSA();
+            this.encryptionServicesRSA      =   new ERSA();
+            this.encryptionServicesElGamal  =   new ElGamal();
         }
 
         #endregion Constructor
@@ -127,6 +129,8 @@ namespace Safe_Communicator.Connectors {
                 client.Name         =   string.Format( "Client {0}", srvIdCounter.ToString() );
                 srvClients.Add( client );
                 client.BeginReciveMessages();
+                UpdateUI( "( i ) Registered new Client with ID: " + srvIdCounter.ToString() );
+                UpdateUI( "      and IPAddress: " + client.GetIPAddress() );
             }
             catch ( NullReferenceException ) { /* srvSocket is current NULL */ }
             catch ( ObjectDisposedException ) { /* srvSocket set to NULL */ }
@@ -150,9 +154,20 @@ namespace Safe_Communicator.Connectors {
 
                 Array.Copy( client.Buffer, buffer, bufferSize );
                 Message newMessage      =   Message.ReadMessage( Encoding.ASCII.GetString( buffer ) );
-                
+
                 //  Deszyfrowanie wiadomości po otrzymaniu.
-                newMessage.Decrypt( encryptionServicesRSA, client.Encrypted );
+                if ( client.Encrypted ) {
+                    ICrypt  encryptionServices = null;
+                    switch ( client.CryptType ) {
+                        case CryptType.RSA:
+                            encryptionServices = encryptionServicesRSA;
+                            break;
+                        case CryptType.ElGamal:
+                            encryptionServices = encryptionServicesElGamal;
+                            break;
+                    }
+                    newMessage.Decrypt( encryptionServices, client.Encrypted );
+                }
                 
                 bool    executed        =   ExecuteClientCommand( newMessage, client );
                 
@@ -214,7 +229,18 @@ namespace Safe_Communicator.Connectors {
             Socket          socket  =   client.Socket;
 
             //  Szyfrowanie wiadomości do wsyłania
-            if ( client.Encrypted ) { message.Encrypt( encryptionServicesRSA, client.Key ); }
+            if ( client.Encrypted ) {
+                ICrypt  encryptionServices = null;
+                switch ( client.CryptType ) {
+                    case CryptType.RSA:
+                        encryptionServices = encryptionServicesRSA;
+                        break;
+                    case CryptType.ElGamal:
+                        encryptionServices = encryptionServicesElGamal;
+                        break;
+                }
+                message.Encrypt( encryptionServices, client.Key );
+            }
 
             byte[]          buffer  =   Encoding.ASCII.GetBytes( message.ToString() );
             Console.Write( message.ToString() );
@@ -338,6 +364,7 @@ namespace Safe_Communicator.Connectors {
         private void ConfigureCommand( string message, ClientData sender ) {
             string[]    arguments   =   Tools.ReadLines( message );
             int         ctpye       =   0;
+            bool        encrypted   =   false;
             string      publicKey   =   "";
 
             //  Pobranie publicznego klucza szyfrującego od klienta.
@@ -350,20 +377,23 @@ namespace Safe_Communicator.Connectors {
             catch ( IndexOutOfRangeException ) { /* Not transferred all required data */ }
             catch ( Exception ) { /* Unknown Data Error Exception */ }
 
-            //  Konfiguracja publicznego klucza szyfrującego od klienta
-            try { if ( ctpye != 0 && arguments[2] != "" ) { sender.Encrypted = true; } }
-            catch { /* NOT CRYPTED */ }
-
             //  Konfiguracja publicznego klucza szyfrującego wiadomości do wsyłania do klienta.
-            if ( sender.Encrypted ) {
+            if ( ((CryptType)ctpye) != CryptType.None ) { encrypted = true; }
+            if ( encrypted && arguments[2] != "" ) {
                 switch ( sender.CryptType ) {
                     case CryptType.RSA:
                         publicKey   =   encryptionServicesRSA.GetPublicKey();
                         break;
                     case CryptType.ElGamal:
+                        publicKey   =   encryptionServicesElGamal.GetPublicKey();
                         break;
                 }
             }
+
+            UpdateUI("( i ) Updated Client data with ID: " + sender.Identifier.ToString());
+            UpdateUI("      Client UserName is: " + sender.Name);
+            UpdateUI("      Client is using Cryptograpyh: " + (encrypted ? "Yes" : "No") );
+            if (encrypted) UpdateUI( "      Client public Key is: " + sender.Key );
 
             string  content     =   Tools.ConcatLines(
                 new string[] { Username, sender.Identifier.ToString(), publicKey, "<end>" },
@@ -371,6 +401,11 @@ namespace Safe_Communicator.Connectors {
             
             Message newMessage  =   new Message( 0, sender.Identifier, DateTime.Now, "/config", content );
             SendMessage( sender, newMessage );
+
+            //  Konfiguracja publicznego klucza szyfrującego od klienta
+            try { if ( encrypted && arguments[2] != "" ) { sender.Encrypted = true; } }
+            catch { /* NOT CRYPTED */ }
+
             UpdateClientList();
         }
 

@@ -30,7 +30,7 @@ namespace Safe_Communicator.Forms {
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "0",
             "Server",
             "127.0.0.1"}, -1);
@@ -76,6 +76,8 @@ namespace Safe_Communicator.Forms {
             this.textBoxMenuIP = new System.Windows.Forms.TextBox();
             this.labelMenuPort = new System.Windows.Forms.Label();
             this.textBoxMenuPort = new System.Windows.Forms.TextBox();
+            this.labelMenuCrypt = new System.Windows.Forms.Label();
+            this.comboBoxMenuCrypt = new System.Windows.Forms.ComboBox();
             this.labelMenuInsideIPTitle = new System.Windows.Forms.Label();
             this.labelMenuInsideIP = new System.Windows.Forms.Label();
             this.labelMenuOutsideIPTitle = new System.Windows.Forms.Label();
@@ -83,8 +85,6 @@ namespace Safe_Communicator.Forms {
             this.tLPanelMenuLaunch = new System.Windows.Forms.TableLayoutPanel();
             this.buttonClient = new System.Windows.Forms.Button();
             this.bgWorkerMenuTime = new System.ComponentModel.BackgroundWorker();
-            this.labelMenuCrypt = new System.Windows.Forms.Label();
-            this.comboBoxMenuCrypt = new System.Windows.Forms.ComboBox();
             this.menuClient.SuspendLayout();
             this.menuServer.SuspendLayout();
             this.panelServer.SuspendLayout();
@@ -363,7 +363,7 @@ namespace Safe_Communicator.Forms {
             this.listViewClientUsers.GridLines = true;
             this.listViewClientUsers.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listViewClientUsers.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem4});
+            listViewItem1});
             this.listViewClientUsers.Location = new System.Drawing.Point(0, 32);
             this.listViewClientUsers.Margin = new System.Windows.Forms.Padding(0);
             this.listViewClientUsers.MultiSelect = false;
@@ -567,6 +567,32 @@ namespace Safe_Communicator.Forms {
             this.textBoxMenuPort.TabIndex = 6;
             this.textBoxMenuPort.Text = "65534";
             // 
+            // labelMenuCrypt
+            // 
+            this.labelMenuCrypt.AutoSize = true;
+            this.labelMenuCrypt.BackColor = System.Drawing.Color.Transparent;
+            this.labelMenuCrypt.ForeColor = System.Drawing.Color.White;
+            this.labelMenuCrypt.Location = new System.Drawing.Point(24, 261);
+            this.labelMenuCrypt.Margin = new System.Windows.Forms.Padding(24, 0, 0, 0);
+            this.labelMenuCrypt.Name = "labelMenuCrypt";
+            this.labelMenuCrypt.Size = new System.Drawing.Size(155, 18);
+            this.labelMenuCrypt.TabIndex = 11;
+            this.labelMenuCrypt.Text = "Rodzaj szyfrowania";
+            // 
+            // comboBoxMenuCrypt
+            // 
+            this.comboBoxMenuCrypt.FormattingEnabled = true;
+            this.comboBoxMenuCrypt.Items.AddRange(new object[] {
+            "Brak szyfrowania",
+            "Szyfrowanie RSA",
+            "Szyfrowanie ElGamal\'a"});
+            this.comboBoxMenuCrypt.Location = new System.Drawing.Point(24, 279);
+            this.comboBoxMenuCrypt.Margin = new System.Windows.Forms.Padding(24, 0, 0, 16);
+            this.comboBoxMenuCrypt.Name = "comboBoxMenuCrypt";
+            this.comboBoxMenuCrypt.Size = new System.Drawing.Size(256, 26);
+            this.comboBoxMenuCrypt.TabIndex = 13;
+            this.comboBoxMenuCrypt.Text = "Brak szyfrowania";
+            // 
             // labelMenuInsideIPTitle
             // 
             this.labelMenuInsideIPTitle.AutoSize = true;
@@ -651,32 +677,6 @@ namespace Safe_Communicator.Forms {
             // bgWorkerMenuTime
             // 
             this.bgWorkerMenuTime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWorkerMenuTimeFunc);
-            // 
-            // labelMenuCrypt
-            // 
-            this.labelMenuCrypt.AutoSize = true;
-            this.labelMenuCrypt.BackColor = System.Drawing.Color.Transparent;
-            this.labelMenuCrypt.ForeColor = System.Drawing.Color.White;
-            this.labelMenuCrypt.Location = new System.Drawing.Point(24, 261);
-            this.labelMenuCrypt.Margin = new System.Windows.Forms.Padding(24, 0, 0, 0);
-            this.labelMenuCrypt.Name = "labelMenuCrypt";
-            this.labelMenuCrypt.Size = new System.Drawing.Size(155, 18);
-            this.labelMenuCrypt.TabIndex = 11;
-            this.labelMenuCrypt.Text = "Rodzaj szyfrowania";
-            // 
-            // comboBoxMenuCrypt
-            // 
-            this.comboBoxMenuCrypt.FormattingEnabled = true;
-            this.comboBoxMenuCrypt.Items.AddRange(new object[] {
-            "Brak szyfrowania",
-            "Szyfrowanie RSA",
-            "Szyfrowanie ElGamal\'a"});
-            this.comboBoxMenuCrypt.Location = new System.Drawing.Point(24, 279);
-            this.comboBoxMenuCrypt.Margin = new System.Windows.Forms.Padding(24, 0, 0, 16);
-            this.comboBoxMenuCrypt.Name = "comboBoxMenuCrypt";
-            this.comboBoxMenuCrypt.Size = new System.Drawing.Size(256, 26);
-            this.comboBoxMenuCrypt.TabIndex = 13;
-            this.comboBoxMenuCrypt.Text = "Brak szyfrowania";
             // 
             // MainForm
             // 

@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Safe_Communicator.Crypt {
 
-    public class ElGamal {
+    public class ElGamal : ICrypt {
         
-        private long[]  publicKey;
-        private long[]  privateKey;
-        private int     keyLong         =   2048;
+        private long[]  publicKey       =   new long[] { 0, 0, 0, 0 };
+        private long[]  privateKey      =   new long[] { 0, 0, 0, 0 };
+        private int     minPower        =   1;
+        private int     maxPower        =   5;
 
         // ################################################################################
         /// <summary> Konstruktor klasy szyfrowania ElGamal. </summary>
@@ -23,10 +24,17 @@ namespace Safe_Communicator.Crypt {
         /// <summary> Funkcja generująca klucze. </summary>
         public void GenerateKeys() {
             Random  random      =   new Random();
-            long    qValue      =   Tools.LongRandom( (long) Math.Pow(10, 1), (long) Math.Pow(10, 10), random );
-            long    gValue      =   Tools.LongRandom( 2, qValue, random );
-            GeneratePrivateKey( qValue, gValue, random );
-            GeneratePublicKey( qValue, gValue, this.privateKey, random );
+            string  testValue   =   "TESTabc123zZ";
+            bool    success     =   false;
+
+            while ( publicKey[3] <= 1 || !success ) {
+                long    qValue      =   Tools.LongRandom( (long) Math.Pow(10, minPower), (long) Math.Pow(10, maxPower), random );
+                long    gValue      =   Tools.LongRandom( 2, qValue, random );
+                GeneratePrivateKey( qValue, gValue, random );
+                GeneratePublicKey( qValue, gValue, this.privateKey, random );
+                if ( Decrypt( Encrypt( testValue, GetPublicKey() ) ) == testValue ) success = true;
+                else success = false;
+            }
         }
 
         // --------------------------------------------------------------------------------
@@ -46,9 +54,9 @@ namespace Safe_Communicator.Crypt {
         /// <param name="random">  </param>
         /// <returns>  </returns>
         private long GenerateKey( long qValue, Random random ) {
-            long key = Tools.LongRandom( (long) Math.Pow(10, 1), qValue, random );
+            long key = Tools.LongRandom( (long) Math.Pow(10, maxPower), qValue, random );
             while ( gcd( qValue, key ) != 1 )
-                key = Tools.LongRandom( (long) Math.Pow(10, 1), qValue, random );
+                key = Tools.LongRandom( (long) Math.Pow(10, maxPower), qValue, random );
             return key;
         }
 
@@ -90,7 +98,7 @@ namespace Safe_Communicator.Crypt {
             long        sValue  =   SplitPublicKey( publicKey )[3];
 
             for ( int i = 0; i < data.Length; i++ ) {
-                result += (sValue * (int) data[i]).ToString();
+                result += (sValue * (long) (int) data[i]).ToString();
                 if ( i < data.Length - 1 ) { result += '-'; }
             }
 
@@ -106,9 +114,10 @@ namespace Safe_Communicator.Crypt {
             string[]    split   =   data.Split( new char[] {'-'} );
             long        hValue  =   this.privateKey[3];
 
-            for ( int i = 0; i < split.Length; i++ ) {
-                result  +=  (char) (long.Parse( split[i] ) / hValue);
-            }
+            try {
+                for ( int i = 0; i < split.Length; i++ )
+                    result += (char) (long.Parse( split[i] ) / hValue);
+            } catch { return ""; }
 
             return result;
         }
@@ -118,7 +127,7 @@ namespace Safe_Communicator.Crypt {
         /// <param name="publicKey"> Klucz w postaci ciągu tekstowego. </param>
         /// <returns> Klucz publiczny. </returns>
         private long[] SplitPublicKey( string publicKey ) {
-            string[] split = publicKey.Split( new char[] { ' ' } );
+            string[] split = publicKey.Split( new char[] { '-' } );
             long[] result = new long[split.Length];
             for ( int i = 0; i < split.Length; i++ ) {
                 result[i] = long.Parse( split[i] );
@@ -133,7 +142,7 @@ namespace Safe_Communicator.Crypt {
             string result = "";
             for ( int i = 0; i < publicKey.Length; i++ ) {
                 result += publicKey[i].ToString();
-                if ( i < publicKey.Length - 1 ) { result += " "; }
+                if ( i < publicKey.Length - 1 ) { result += "-"; }
             }
             return result;
         }

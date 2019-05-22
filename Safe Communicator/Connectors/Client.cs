@@ -73,7 +73,16 @@ namespace Safe_Communicator.Connectors {
             this.Port       =   port;
             this.cryptType  =   ctype;
 
-            this.encryptionServices = new ERSA();
+            switch ( this.cryptType ) {
+                case CryptType.RSA:
+                    this.encryptionServices = new ERSA();
+                    break;
+
+                case CryptType.ElGamal:
+                    this.encryptionServices = new ElGamal();
+                    break;
+            }
+            
         }
 
         #endregion Constructor
@@ -142,6 +151,7 @@ namespace Safe_Communicator.Connectors {
                     Message newMessage      =   Message.ReadMessage( Encoding.ASCII.GetString( message ) );
                     
                     // DECRYPTION
+                    Console.WriteLine( newMessage.ToString() );
                     newMessage.Decrypt( encryptionServices, encryption );
                     
                     bool    executed        =   ExecutServerCommand( newMessage );
@@ -236,17 +246,11 @@ namespace Safe_Communicator.Connectors {
         // ------------------------------------------------------------------------------------------
         /// <summary> Funkcja wysyłająca do serwera dane konfiguracyjne klienta. </summary>
         private void ConfigureServerCommand() {
-            string  publicKey   =   "";
+            string publicKey    =   "";
 
-            //  Konfiguracja publicznego klucza szyfrującego wiadomości do wsyłania do serwera.
-            switch ( cryptType ) {
-                case CryptType.RSA:
-                    publicKey   =   encryptionServices.GetPublicKey();
-                    break;
-                case CryptType.ElGamal:
-                    break;
-            }
-            
+            //  Konfiguracja publicznego klucza szyfrującego wiadomości dla serwera.
+            if ( cryptType != CryptType.None ) publicKey = encryptionServices.GetPublicKey();
+
             string  content     =   Tools.ConcatLines(
                 new string[] { Username, ((int)this.cryptType).ToString(), publicKey, "<end>" },
                 0, 4, Environment.NewLine );
@@ -288,17 +292,23 @@ namespace Safe_Communicator.Connectors {
         /// <param name="message"> Wiadomość konfiguracyjna z serwera. </param>
         private void ConfigureClientCommand( string message ) {
             string[]    arguments   =   Tools.ReadLines( message );
+            bool        encrypted   =   false;
 
             try {
                 srvName             =   arguments[0];
                 identifier          =   int.Parse( arguments[1] );
-                // RECIVE KEY
-                serverPublicKey     =   arguments[2];
+                //  Konfiguracja publicznego klucza od serwera szyfrującego wiadomości.
+                serverPublicKey =   arguments[2];
             }
             catch ( IndexOutOfRangeException ) { /* Not transferred all required data */ }
             catch ( Exception ) { /* Unknown Data Error Exception */ }
 
-            try { if ( arguments[1] != "" ) { encryption = true; } } catch { /* NOT CRYPTED */ }
+            try {
+                encrypted = cryptType != CryptType.None && arguments[1] != "";
+                if (encrypted) UpdateUI("Server public Key is: " + serverPublicKey, MessageModifier.SERVER);
+                encryption = encrypted;
+            } catch { /* NOT CRYPTED */ }
+
             UpdateList();
         }
 

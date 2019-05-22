@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Safe_Communicator.Crypt;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -106,6 +107,8 @@ namespace Safe_Communicator.Classes {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Funkcja zwracająca Adres IP klienta. </summary>
+        /// <returns> Adres IP </returns>
         public IPAddress GetIPAddress() {
             if ( socket == null ) { return null; }
             IPEndPoint  remoteEndPoint  =   (IPEndPoint) socket.RemoteEndPoint;
@@ -114,18 +117,21 @@ namespace Safe_Communicator.Classes {
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Rodzaj szyfrowania </summary>
         public CryptType CryptType {
             get { return this.cryptType; }
             set { this.cryptType = value; }
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Zewnętrzny klucz publiczny. </summary>
         public string Key {
             get { return this.clientPublicKey; }
             set { this.clientPublicKey = value; }
         }
 
         // ------------------------------------------------------------------------------------------
+        /// <summary> Informacja czy szyfrowanie jest aktywne. </summary>
         public bool Encrypted {
             get { return this.encryption; }
             set { this.encryption = value; }
